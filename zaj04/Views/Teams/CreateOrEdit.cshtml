@@ -1,0 +1,56 @@
+﻿@model zaj04.Models.Team
+
+@{
+    ViewBag.Title = "CreateOrEdit";
+    List < zaj04.Models.Team > teamsList = ViewBag.List;
+    //int? iSelected =  teamsList.Where(n => n.Id == ViewBag.Id).Select(n=> n.Id).FirstOrDefault();
+    int? iSelected = teamsList.FindIndex(n => n.Id == ViewBag.Id);
+    string stopCuttingAtSpace = ((ViewBag.Id != null) && (iSelected != null)) ? ($" value= \"{teamsList[(int)iSelected].Name} {iSelected}\"") : "";
+}
+
+<h2>CreateOrEdit</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Team</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-10" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, "Leave empty to add new or pick a team to edit", htmlAttributes: new { @class = "control-label col-md-10" })
+            <div class="col-md-10">
+                <input type="text" name="Index" list="teams"@Html.Raw(stopCuttingAtSpace)>
+                <datalist id="teams">
+                    @for (int i = 0; i < teamsList.Count; i++)
+                    {
+                        @:<option value="@teamsList[i].Name @i"@( ((ViewBag.Id != null) && (teamsList[i].Id == ViewBag.Id)) ? " selected" : "")>@teamsList[i].Name
+                    }
+                </datalist>
+            </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
